@@ -204,7 +204,7 @@ class Klann(LinkageSystem):
         self.fourbar_vel()                        # solve for w2 & w3, update w matrix
         self.w[:, 5] = self.w[:, 2]               # apply ternary link velocity constraint
         self.fivebar_vel()                        # solve for w6 & w7
-        self.w[:, 6] = self.w[:, 8]               # w7 = w8 (colinear link7 & link8)
+        self.w[:, 7] = self.w[:, 8]               # w7 = w8 (colinear link7 & link8)
         
     def fourbar_pos(self):
         # fourbar position analysis using half-angle method
@@ -259,6 +259,7 @@ class Klann(LinkageSystem):
         self.hook_x = self.L[6]*np.cos(self.theta[:, 6]) + self.L[8]*np.cos(self.theta[:, 8])
         self.hook_y = self.L[6]*np.sin(self.theta[:, 6]) + self.L[8]*np.sin(self.theta[:, 8])
 
+    # this might be wrong, idk. it also doesn't account for moving bodies
     def hook_vel(self):
         self.hook_xvel = self.L[6]*self.w[:, 6]*np.sin(self.theta[:, 6]) + self.L[8]*self.w[:, 8]*np.sin(self.theta[:, 8])
         self.hook_yvel = self.L[6]*self.w[:, 6]*np.cos(self.theta[:, 6]) + self.L[8]*self.w[:, 8]*np.cos(self.theta[:, 8])
