@@ -4,6 +4,11 @@ Simulates the kinematics of various linkage mechanisms for traversing monkey-bar
 ## usage
 run klann_simulation.py or pantograph_simulation.py to generate interactive simulation plots
 
+## requirements
+`pip install -r requirements.txt`
+    - simulation utilizes numpy, scipy, and matplotlib
+    - reading data from motiongen files requires tabula-py (which depends on pandas)
+
 ## choosing simulations
 scroll to the bottom of either simulation file. Under `if __name__ == '__main__'`, comment/uncomment the function calls to choose the desired output
 
@@ -21,7 +26,7 @@ kwargs = dict(
     input_angular_velocity = 1,                   # constant input ang. vel. for velocity sim
     theta0 = np.pi,                               # fixed angle between ground points
     theta_constraint = np.deg2rad(-58),           # meaning varies for different linkage systems
-    paths = [8, -1]                               # indices of the joints of which to trace the movement path ( origin is the last column)
+    paths = [8, -1]                               # indices of the joints of which to trace the movement path (origin is the last column)
 )
 ``` 
 
@@ -34,8 +39,8 @@ kwargs = dict(
     - phi is the angle between L4 and L5, which is the angle of the corner of the ternary link that is connected to the driven link (L1)
 
 
-# units
-`reference/dimensions.pdf` uses millimeters, the python files are in inches (will be converted)
+## units
+`reference/dimensions.pdf` and `motiongen/klann_mechanism` use millimeters, the default values in the python files are in inches (will be converted)
 
 ## motiongen.io integration
-in the `motiongen` folder, there's a `.motiongen` file that can be opened by going to `motiongen.io` and importing the file. If you make changes and export to a pdf, then replace that pdf with the one currently in the `motiongen` folder, the simulation scripts will read in the new geometry. (Do not add/remove links in motiongen, if any of the link numbers change, the simulation scripts will break)
+In the `motiongen` folder, there's a `.motiongen` file that can be opened by going to `motiongen.io` and importing the file. If you make changes and export to a pdf, then replace that pdf with the one currently in the `motiongen` folder, the simulation scripts will read in the new geometry. (Do not add/remove links in motiongen, if any of the link numbers change, the simulation scripts will break)
