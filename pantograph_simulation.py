@@ -9,22 +9,6 @@ from matplotlib.widgets import Slider
 from linkages import Pantograph
 
 
-# add keyboard interaction to slider
-def on_press(event, slider):
-    if event.key == 'right' and slider.val < slider.valmax:
-        slider.set_val(slider.val + 3)
-    if event.key == 'left' and slider.val > slider.valmin:
-        slider.set_val(slider.val - 3)
-    if event.key == 'shift+right' and slider.val < slider.valmax:
-        slider.set_val(slider.val + 1)
-    if event.key == 'shift+left' and slider.val > slider.valmin:
-        slider.set_val(slider.val - 1)
-    if event.key == 'ctrl+right' and slider.val < slider.valmax:
-        slider.set_val(slider.val + 10)
-    if event.key == 'ctrl+left' and slider.val > slider.valmin:
-        slider.set_val(slider.val - 10)
-
-
 def two_phase():
     kwargs = dict(
         cycles = 4,
@@ -163,6 +147,22 @@ def three_phase():
     fig.canvas.mpl_connect('key_press_event', lambda e: on_press(e, slider))
 
     plt.show()
+
+
+# add keyboard interaction to slider
+def on_press(event, slider):
+    if event.key == 'right' and slider.val < slider.valmax:
+        slider.set_val(slider.val + 3)
+    if event.key == 'left' and slider.val > slider.valmin:
+        slider.set_val(slider.val - 3)
+    if event.key == 'shift+right' and slider.val < slider.valmax:
+        slider.set_val(slider.val + 1)
+    if event.key == 'shift+left' and slider.val > slider.valmin:
+        slider.set_val(slider.val - 1)
+    if event.key == 'ctrl+right' and slider.val < slider.valmax:
+        slider.set_val(slider.val + 10)
+    if event.key == 'ctrl+left' and slider.val > slider.valmin:
+        slider.set_val(slider.val - 10)
 
 
 if __name__ == '__main__':
