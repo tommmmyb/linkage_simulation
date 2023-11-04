@@ -6,8 +6,9 @@ run klann_simulation.py or pantograph_simulation.py to generate interactive simu
 
 ## requirements
 `pip install -r requirements.txt`
-    - simulation utilizes numpy, scipy, and matplotlib
-    - reading data from motiongen files requires tabula-py (which depends on pandas)
+
+- simulation utilizes numpy, scipy, and matplotlib
+- reading data from motiongen files requires tabula-py (which depends on pandas)
 
 ## choosing simulations
 scroll to the bottom of either simulation file. Under `if __name__ == '__main__'`, comment/uncomment the function calls to choose the desired output
