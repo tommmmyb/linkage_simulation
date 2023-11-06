@@ -45,3 +45,7 @@ kwargs = dict(
 
 ## motiongen.io integration
 In the `motiongen` folder, there's a `.motiongen` file that can be opened by going to `motiongen.io` and importing the file. If you make changes and export to a pdf, then replace that pdf with the one currently in the `motiongen` folder, the simulation scripts will read in the new geometry. (Do not add/remove links in motiongen, if any of the link numbers change, the simulation scripts will break)
+
+## output
+![Klann](animations/klann.gif)
+![Pantograph](animations/pantograph.gif)
