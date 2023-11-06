@@ -65,9 +65,8 @@ class LinkageSystem():
         return val / (2*np.pi) * self.num_per_cycle
     
     def link_pos(self):
-        x = self.L * np.cos(self.theta)
-        y = self.L * np.sin(self.theta)
-        xy = np.stack([x,y], axis=2)
+        cos_sin = np.stack([np.cos(self.theta), np.sin(self.theta)], axis=2)
+        xy = np.einsum('i,jik->jik', self.L, cos_sin)
 
         self.joints = np.zeros(xy.shape)
 
