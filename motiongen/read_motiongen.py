@@ -17,7 +17,7 @@ def read_klann_specs(file):
         'J6 - J8'         # L8
     ]
 
-    L = df['Length [cm]'][links].to_numpy()*10
+    L = df['Length [cm]'][links].to_numpy()/100 # convert to meters
     
     theta0 = df['Angle [rad]']['J1 - J2'].astype(float)
     theta_constraint = df['Angle [rad]']['J2 - J3'].astype(float)

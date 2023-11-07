@@ -2,7 +2,6 @@
 author: tommmmyb
 Simulation of Klann 6-bar walking mechanism, flipped vertically to be used to traverse monkey-bars
 '''
-
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
@@ -33,43 +32,46 @@ params = dict(
 
 
 def kinematic_sim():
-    kwargs = dict(
+    kwargs = params | (read_klann_specs('motiongen/klann_mechanism.pdf') if mg else dict()) | \
+        dict(
 
         ############################### input parameters
+        cycles = 1, # overwrite params
         grab = 0.0,
         release = 0.38*2*np.pi,
         input_angle = np.deg2rad(210),
         paths = [-1,8]
         ###############################
 
-    ) | params | (read_klann_specs('motiongen/klann_mechanism.pdf') if mg else dict())  # pull geometry parameters from motiongen pdf
+    )
     sys = Klann(**kwargs)
-    sys.movement_sim(8)    # execute standard single-linkage-system movement relative to hook (link8)
-
-    # TODO: implement link velocity in LinkageSystem and get rid of all 'hook' functions
-    sys.hook_pos()
-    sys.hook_vel()
-    sys.arm_pos()
     
-    fig, ax = plt.subplot_mosaic('AB;CC', constrained_layout=False, figsize=(15, 10))
-    ax['B'].set_prop_cycle('color', plt.cm.viridis(np.linspace(0,1,10)))
-    ax['A'].plot(sys.hook_x, sys.hook_y, label='hook path'); ax['A'].set_aspect('equal', adjustable='box')
-    arm, = ax['A'].plot(sys.arm_x[:,0], sys.arm_y[:,0], 'ro-')
-    ax['C'].plot(np.rad2deg(sys.theta[:, 1]), sys.hook_xvel, label='hook x-velocity')
-    ax['C'].plot(np.rad2deg(sys.theta[:, 1]), sys.hook_yvel, label='hook y-velocity')
-    vline = ax['C'].axvline(x=np.rad2deg(sys.start_angle), color='limegreen')
-    ax['B'].set_xlim(np.min(sys.links[:,:,0]), np.max(sys.links[:,:,0])+0.25), ax['B'].set_ylim(np.min(sys.links[:,:,1]), np.max(sys.links[:,:,1])+0.25)
-    ax['B'].set_aspect('equal', adjustable=None)
+    fig, ax = plt.subplot_mosaic('ABB;ACC', constrained_layout=False, figsize=(15, 10))
+    ax['B'].sharex(ax['C'])
+    ax['B'].tick_params(labelbottom=False)
+    ax['A'].set_prop_cycle('color', plt.cm.winter(np.linspace(.8,0,8)))
+    ax['B'].set_prop_cycle('color', plt.cm.autumn([.1, .6]))
+    ax['C'].set_prop_cycle('color', plt.cm.summer([.2, .7]))
 
+    ax['A'].set_xlabel(r'x $[m]$')
+    ax['A'].set_ylabel(r'y $[m]$')
+    ax['B'].set_ylabel(r'velocity $[m/s]$')
+    ax['C'].set_ylabel(r'acceleration $[m^{2}/s]$')
+    ax['C'].set_xlabel(r'input crank angle $[deg]$')
+
+    ax['A'].plot(sys.links[:, 8, 0], sys.links[:, 8, 1], label='hook path', linewidth=3); ax['A'].set_aspect('equal', adjustable='box')
     points = []
     for map in sys.connection_mapping.values():
-         link_points, = ax['B'].plot(sys.links[0, map, 0], sys.links[0, map, 1], 'o-')
+         link_points, = ax['A'].plot(sys.links[0, map, 0], sys.links[0, map, 1], 'o-', linewidth=2)
          points.append(link_points)
 
-    paths = []
-    for i in sys.paths:
-        path, = ax['B'].plot(*np.split(sys.links[:0, i, :], 2, axis=-1))
-        paths.append(path)
+    ax['B'].plot(np.rad2deg(sys.theta[:, 1]), sys.link_velocities[:, 8, 0], label='x-velocity', linewidth=2)
+    ax['B'].plot(np.rad2deg(sys.theta[:, 1]), sys.link_velocities[:, 8, 1], label='y-velocity', linewidth=2)
+    vline1 = ax['B'].axvline(np.rad2deg(sys.start_angle), color='black', linestyle='--')
+
+    ax['C'].plot(np.rad2deg(sys.theta[:-1, 1]), sys.link_accelerations[:, 8, 0], label='x-acceleration', linewidth=2)
+    ax['C'].plot(np.rad2deg(sys.theta[:-1, 1]), sys.link_accelerations[:, 8, 1], label='y-acceleration', linewidth=2)
+    vline2 = ax['C'].axvline(np.rad2deg(sys.start_angle), color='black', linestyle='--')
 
     axslider = fig.add_axes([0.2, 0.9, 0.65, 0.02])
     slider = Slider(
@@ -81,20 +83,14 @@ def kinematic_sim():
     )
 
     def update(val):
-        arm.set_xdata(sys.arm_x[:, int(slider.val)])
-        arm.set_ydata(sys.arm_y[:, int(slider.val)])
-        vline.set_xdata(np.rad2deg(sys.start_angle) + slider.val)
-        for n, i in enumerate(sys.paths):
-            paths[n].set_data(*np.split(sys.links[:int(slider.val), i, :], 2, axis=-1))
+        [vline.set_xdata(np.array([np.rad2deg(sys.start_angle) + slider.val])) for vline in [vline1, vline2]]
         for link, map in sys.connection_mapping.items():
             points[link].set_data(sys.links[int(slider.val), map, 0], sys.links[int(slider.val), map, 1])
 
     slider.on_changed(update)
     fig.canvas.mpl_connect('key_press_event', lambda e: on_press(e, slider))
-
-    # graph formatting
-    for a in ax.values():
-            a.grid(); a.legend()
+    [(a.grid(), a.legend(loc='lower left')) for a in ax.values()]
+            
     plt.show()
 
 
@@ -249,6 +245,6 @@ def on_press(event, slider):
 
 
 if __name__ == '__main__':
-    # kinematic_sim()
+    kinematic_sim()
     # two_phase()
-    three_phase()
+    # three_phase()
