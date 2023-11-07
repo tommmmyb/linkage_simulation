@@ -90,7 +90,7 @@ def klann_kinematic_sim():
 def pantograph_kinematic_sim():
     kwargs = dict(
         cycles = 1,
-        L = [2.75, 0.759, 1.14, 2.92, 2.55, 7.17],    # L's 0-5
+        L = np.array([2.75, 0.759, 1.14, 2.92, 2.55, 7.17]) * 0.0254,    # L's 0-5
         phi = 0.185,                                  # [rad] fixed acute angle between L4 & L5
         input_angular_velocity = 1,
         theta0 = np.deg2rad(0),
@@ -229,7 +229,7 @@ def klann_three_phase():
 def pantograph_two_phase():
     kwargs = dict(
         cycles = 4,
-        L = [2.75, 0.759, 1.14, 2.92, 2.55, 7.17],    # L's 0-5
+        L = np.array([2.75, 0.759, 1.14, 2.92, 2.55, 7.17]) * 0.0254,    # L's 0-5
         phi = 0.185,                                  # [rad] fixed acute angle between L4 & L5
         input_angular_velocity = 1,
         theta0 = np.deg2rad(0),
@@ -262,7 +262,7 @@ def pantograph_two_phase():
     # plot setup
     fig, ax = plt.subplot_mosaic('B', constrained_layout=True, figsize=(20, 5))
     ax['B'].set_prop_cycle('color', plt.cm.jet(np.linspace(0,1,6)))
-    ax['B'].set_xlim(np.min(sys1.links[:,:,0]-0.25), np.max(sys2.links[:,:,0])+0.25), ax['B'].set_ylim(np.min(sys1.links[:,:,1]-0.25), np.max(sys2.links[:,:,1])+0.25)
+    ax['B'].set_xlim(np.min(sys1.links[:,:,0]-0.025), np.max(sys2.links[:,:,0])+0.025), ax['B'].set_ylim(np.min(sys1.links[:,:,1]-0.025), np.max(sys2.links[:,:,1])+0.025)
     ax['B'].set_aspect('equal', adjustable=None)
     [a.grid() for a in ax.values()]
 
@@ -295,6 +295,6 @@ def pantograph_two_phase():
 
 if __name__ == '__main__':
     # klann_kinematic_sim()
-    pantograph_kinematic_sim()
+    # pantograph_kinematic_sim()
     # klann_three_phase()
-    # pantograph_two_phase()
+    pantograph_two_phase()
