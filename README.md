@@ -49,3 +49,4 @@ In the `motiongen` folder, there's a `.motiongen` file that can be opened by goi
 ## output
 ![Klann](animations/klann.gif)
 ![Pantograph](animations/pantograph.gif)
+![Klann Kinematics](animations/klann_kinematics.gif) ![Pantograph Kinematics](animations/pantograph_kinematics.gif)
