@@ -149,18 +149,39 @@ class LinkageSystem():
     def movement_sim(self, link):
         self.move_body_rel_point(point=self.links[:, [link], :], mask=self.mask)
         self.update_origins(self.mask)
+
+    def plot_bars(self, ax, link, **kwargs):
+        if self.mask[0] == 1:
+            bars = self.links[0:1, link, :]
+            bars = np.append(bars, self.links[np.where(self.mask == 2)[0], link, :], axis=0)
+        else:
+            bars = self.links[np.where(self.mask == 2)[0], link, :]
+        ax.plot(bars[:, 0], bars[:, 1], **kwargs)
         
     def plot_links(self, ax, fill=False, **kwargs):
+        if 'label' in kwargs.keys():
+            l = True
+        else: 
+            l = False
         for map in self.connection_mapping.values():
             if len(set(map)) != len(map) and fill:
                 line, = ax.fill(self.links[0, map, 0], self.links[0, map, 1])
             else:
                 line, = ax.plot(self.links[0, map, 0], self.links[0, map, 1], **kwargs)
+            if l: 
+                l = False
+                kwargs.pop('label')
             self.link_plots.append(line)
     
     def plot_paths(self, ax, **kwargs):
-        for joint in self.paths:
-            line, = ax.plot(*np.split(self.links[:0, joint, :], 2, axis=-1), **kwargs)
+        l = None
+        if 'label' in kwargs.keys():
+            if isinstance(kwargs['label'], list):
+                l = kwargs['label']
+                kwargs.pop('label')
+
+        for i, joint in enumerate(self.paths):
+            line, = ax.plot(*np.split(self.links[:0, joint, :], 2, axis=-1), label=(l[i] if l else ''), **kwargs)
             self.path_plots.append(line)
 
     def update_links(self, index):
@@ -204,6 +225,7 @@ class Klann(LinkageSystem):
             2: [1, 3, 5, 1],
             3: [4, 6],
             4: [4, 6, 8],
+            # 5: [0, -1, 4, 0] # connect ground links
         }
 
     def angle(self):

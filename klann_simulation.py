@@ -158,15 +158,17 @@ def two_phase():
 
 
 def three_phase():
-    kwargs = dict(
+    kwargs = params | (read_klann_specs('motiongen/klann_mechanism.pdf') if mg else dict()) | \
+        dict(
 
         ######################### input parameters
-        paths = [-1,8],
+        paths = [8, -1],
         grab = 4/3*np.pi - 0.15,
-        release = 2*np.pi - 0.15
+        release = 2*np.pi - 0.15,
+        theta0 = np.deg2rad(180)
         #########################
 
-    ) | params | (read_klann_specs('motiongen/klann_mechanism.pdf') if mg else dict()) 
+    )
     # initialize linkage systems
     sys1 = Klann(input_angle=0, **kwargs)
     sys2 = Klann(input_angle=0, phase_shift=2/3*np.pi, origin=(0,0), **kwargs)
@@ -195,17 +197,27 @@ def three_phase():
 
 
     # plot setup
-    fig, ax = plt.subplot_mosaic('B', constrained_layout=True, figsize=(20, 5))
+    fig, ax = plt.subplot_mosaic('B', constrained_layout=False, figsize=(20, 5))
     ax['B'].set_prop_cycle('color', plt.cm.jet(np.linspace(0,1,6)))
-    ax['B'].set_xlim(np.min(sys1.links[:,:,0]-0.25), np.max(sys2.links[:,:,0])+0.25), ax['B'].set_ylim(np.min(sys1.links[:,:,1]-0.25), np.max(sys2.links[:,:,1])+0.25)
+    ax['B'].set_xlim(np.min(sys1.links[:,:,0]-0.025), np.max(sys2.links[:,:,0])+0.025), ax['B'].set_ylim(np.min(sys1.links[:,:,1]-0.025), np.max(sys2.links[:,:,1])+0.025)
     ax['B'].set_aspect('equal', adjustable=None)
     [a.grid() for a in ax.values()]
+    
 
     # plot initial state
     for sys in systems:
+        sys.plot_bars(ax['B'], 8, linestyle='', marker='o', color='black', markerfacecolor='none', markeredgewidth=3)
         c = ax['B']._get_lines.get_next_color()
         sys.plot_links(ax['B'], marker='o', color=c, linewidth=2, fill=False)
         sys.plot_paths(ax['B'], linestyle='-', color=c, linewidth=0.7)
+
+    # this is terrible
+    lines = ax['B'].get_lines()
+    plt.setp(lines[-1], linestyle='--', color='black', linewidth=1.5)
+    plt.setp(lines[7], linestyle='none')
+    plt.setp(lines[15], linestyle='none')
+    labels = ['monkey bars', 'Klann Linkage 1', 'Linkage 1 Hook Path', 'Klann Linkage 2', 'Linkage 2 Hook Path', 'Klann Linkage 3', 'Linkage 3 Hook Path', 'Ground Link Path']
+    ax['B'].legend([lines[i] for i in [0,1,6,9,14,17,22,-1]], labels, loc='lower left')
 
     # add slider
     axslider = fig.add_axes([0.2, 0.9, 0.65, 0.02])
@@ -245,6 +257,6 @@ def on_press(event, slider):
 
 
 if __name__ == '__main__':
-    kinematic_sim()
+    # kinematic_sim()
     # two_phase()
-    # three_phase()
+    three_phase()

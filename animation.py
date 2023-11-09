@@ -159,7 +159,7 @@ def klann_three_phase():
         ######################### input parameters
         cycles = 2,
         input_angular_velocity = 1,
-        paths = [-1,8],
+        paths = [8,-1],
         grab = 4/3*np.pi - 0.15,
         release = 2*np.pi - 0.15
         #########################
@@ -203,12 +203,23 @@ def klann_three_phase():
 
     # plot initial state
     def init():
+        # plot initial state
         for sys in systems:
+            sys.plot_bars(ax['B'], 8, linestyle='', marker='o', color='black', markerfacecolor='none', markeredgewidth=3)
             c = ax['B']._get_lines.get_next_color()
             sys.plot_links(ax['B'], marker='o', color=c, linewidth=2, fill=False)
             sys.plot_paths(ax['B'], linestyle='-', color=c, linewidth=0.7)
             artists.extend(sys.link_plots)
             artists.extend(sys.path_plots)
+
+        # this is terrible
+        lines = ax['B'].get_lines()
+        plt.setp(lines[-1], linestyle='--', color='black', linewidth=1.5)
+        plt.setp(lines[7], linestyle='none')
+        plt.setp(lines[15], linestyle='none')
+        labels = ['monkey bars', 'Klann Linkage 1', 'Linkage 1 Hook Path', 'Klann Linkage 2', 'Linkage 2 Hook Path', 'Klann Linkage 3', 'Linkage 3 Hook Path', 'Ground Link Path']
+        ax['B'].legend([lines[i] for i in [0,1,6,9,14,17,22,-1]], labels, loc='lower left')
+
         return artists,
 
     def update(frame):
@@ -296,5 +307,5 @@ def pantograph_two_phase():
 if __name__ == '__main__':
     # klann_kinematic_sim()
     # pantograph_kinematic_sim()
-    # klann_three_phase()
-    pantograph_two_phase()
+    klann_three_phase()
+    # pantograph_two_phase()
